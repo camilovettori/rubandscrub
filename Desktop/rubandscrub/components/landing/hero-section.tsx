@@ -38,7 +38,7 @@ export function HeroSection() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 8000); // Slowed down to 8 seconds for more premium feel
+    }, 4000); // Faster rotation for a more dynamic premium feel
 
     return () => clearInterval(interval);
   }, []);
@@ -50,7 +50,7 @@ export function HeroSection() {
         {slides.map((slide, index) => (
           <div
             key={slide}
-            className={`absolute inset-0 transition-opacity duration-3000 ease-in-out ${
+            className={`absolute inset-0 transition-opacity duration-[800ms] ease-in-out ${
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
             style={{
@@ -62,7 +62,7 @@ export function HeroSection() {
           >
             {/* Enhanced zoom animation */}
             <div
-              className={`absolute inset-0 transition-transform duration-[12000ms] ease-out ${
+              className={`absolute inset-0 transition-transform duration-[9000ms] ease-out ${
                 index === currentSlide ? "scale-110" : "scale-100"
               }`}
               style={{
