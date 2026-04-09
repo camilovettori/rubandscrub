@@ -1,0 +1,19 @@
+import { BookingWizard } from "@/components/booking/booking-wizard";
+
+export default function BookingPage() {
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-cyan-50 py-12">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+            Book Your Mobile Valet
+          </h1>
+          <p className="mt-2 text-lg text-gray-600">
+            Complete your booking in just a few steps
+          </p>
+        </div>
+        <BookingWizard />
+      </div>
+    </main>
+  );
+}

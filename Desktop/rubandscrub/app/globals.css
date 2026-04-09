@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --muted: 100 116 139;
+  --surface: 248 250 252;
+  --surface-strong: 241 245 249;
+  --border: 226 232 240;
+  --accent: 14 165 233;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  min-height: 100vh;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  border-color: rgb(var(--border) / 0.8);
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.25);
+  color: rgb(var(--foreground));
+}
