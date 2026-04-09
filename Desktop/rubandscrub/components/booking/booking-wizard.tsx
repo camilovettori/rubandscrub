@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CustomDatePicker } from "./custom-date-picker";
 import { BookingSuccess } from "./booking-success";
@@ -44,6 +44,57 @@ const extras = [
   { name: "Engine bay clean", price: "€25 – €50" },
   { name: "Hand wax/polish", price: "€30 – €60" },
 ];
+
+function toDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseDateKey(dateKey: string) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+function getAvailableTimeSlots(selectedDate: string) {
+  if (!selectedDate) {
+    return timeSlots;
+  }
+
+  const selected = parseDateKey(selectedDate);
+
+  if (!selected) {
+    return [];
+  }
+
+  const today = new Date();
+  const todayKey = toDateKey(today);
+  const selectedKey = toDateKey(selected);
+
+  if (selectedKey !== todayKey) {
+    return timeSlots;
+  }
+
+  const currentMinutes = today.getHours() * 60 + today.getMinutes();
+
+  return timeSlots.filter((slot) => {
+    if (slot.startsWith("Morning")) {
+      return currentMinutes < 13 * 60;
+    }
+
+    if (slot.startsWith("Afternoon")) {
+      return currentMinutes < 20 * 60;
+    }
+
+    return true;
+  });
+}
 
 function ProgressIndicator({ currentStep }: { currentStep: number }) {
   return (
@@ -198,7 +249,17 @@ function Step3Service({ formData, setFormData }: { formData: FormData; setFormDa
   );
 }
 
-function Step4Booking({ formData, setFormData }: { formData: FormData; setFormData: (data: FormData) => void }) {
+function Step4Booking({
+  formData,
+  setFormData,
+  availableTimeSlots,
+}: {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+  availableTimeSlots: string[];
+}) {
+  const isSelectedDateToday = formData.preferredDate === toDateKey(new Date());
+
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">Preferred Booking</h2>
@@ -213,20 +274,31 @@ function Step4Booking({ formData, setFormData }: { formData: FormData; setFormDa
         </label>
         <label className="block">
           <span className="text-sm font-medium text-gray-700">Preferred Time Slot</span>
-          <select
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            value={formData.timeSlot}
-            onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
-            required
-          >
-            <option value="">Select a time slot</option>
-            {timeSlots.map((slot) => (
-              <option key={slot} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
+          {availableTimeSlots.length > 0 ? (
+            <select
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              value={formData.timeSlot}
+              onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
+              required
+            >
+              <option value="">Select a time slot</option>
+              {availableTimeSlots.map((slot) => (
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="mt-1 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              No time slots available for today. Please choose another date.
+            </div>
+          )}
         </label>
+        {isSelectedDateToday && availableTimeSlots.length > 0 ? (
+          <p className="text-sm text-gray-600">
+            Only future-valid time slots are shown for today.
+          </p>
+        ) : null}
         <label className="block">
           <span className="text-sm font-medium text-gray-700">Notes</span>
           <textarea
@@ -313,6 +385,17 @@ export function BookingWizard() {
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const availableTimeSlots = getAvailableTimeSlots(formData.preferredDate);
+
+  useEffect(() => {
+    if (formData.timeSlot && !availableTimeSlots.includes(formData.timeSlot)) {
+      setFormData((current) => ({
+        ...current,
+        timeSlot: "",
+      }));
+    }
+  }, [availableTimeSlots, formData.timeSlot]);
+
   const nextStep = () => {
     if (currentStep < 5) setCurrentStep(currentStep + 1);
   };
@@ -330,7 +413,12 @@ export function BookingWizard() {
       case 3:
         return formData.service && formData.carModel;
       case 4:
-        return formData.preferredDate && formData.timeSlot;
+        return (
+          formData.preferredDate &&
+          availableTimeSlots.length > 0 &&
+          formData.timeSlot &&
+          availableTimeSlots.includes(formData.timeSlot)
+        );
       default:
         return true;
     }
@@ -372,7 +460,7 @@ export function BookingWizard() {
 
       setIsSuccess(true);
       setIsLoading(false);
-    } catch (error: unknown) {
+    } catch {
       setError("Network error. Please check your connection and try again.");
       setIsLoading(false);
     }
@@ -392,7 +480,13 @@ export function BookingWizard() {
       case 3:
         return <Step3Service formData={formData} setFormData={setFormData} />;
       case 4:
-        return <Step4Booking formData={formData} setFormData={setFormData} />;
+        return (
+          <Step4Booking
+            formData={formData}
+            setFormData={setFormData}
+            availableTimeSlots={availableTimeSlots}
+          />
+        );
       case 5:
         return (
           <Step5Review

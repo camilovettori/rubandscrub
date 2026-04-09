@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookingsCalendar } from "@/components/admin/bookings-calendar";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
+  monthParam,
   normalizeMonthParam,
   sortBookings,
   type Booking,
@@ -63,7 +64,7 @@ export default async function AdminBookingsPage({ searchParams }: BookingsPagePr
             Failed to load bookings: {error.message}
           </section>
         ) : (
-          <BookingsCalendar bookings={bookings} currentMonth={currentMonth} />
+          <BookingsCalendar bookings={bookings} currentMonthKey={monthParam(currentMonth)} />
         )}
       </div>
     </main>

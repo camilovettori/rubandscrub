@@ -14,6 +14,23 @@ export function CustomDatePicker({ value, onChange, placeholder = "Select date" 
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const pickerRef = useRef<HTMLDivElement>(null);
 
+  function toDateKey(date: Date) {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function parseDateKey(dateKey: string) {
+    const [year, month, day] = dateKey.split("-").map(Number);
+
+    if (!year || !month || !day) {
+      return null;
+    }
+
+    return new Date(year, month - 1, day);
+  }
+
   // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,7 +46,13 @@ export function CustomDatePicker({ value, onChange, placeholder = "Select date" 
   // Initialize current month to today if no value, or to selected month
   useEffect(() => {
     if (value) {
-      const selectedDate = new Date(value);
+      const selectedDate = parseDateKey(value);
+
+      if (!selectedDate) {
+        setCurrentMonth(new Date());
+        return;
+      }
+
       setCurrentMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
     } else {
       setCurrentMonth(new Date());
@@ -37,22 +60,18 @@ export function CustomDatePicker({ value, onChange, placeholder = "Select date" 
   }, [value]);
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
+  const todayKey = toDateKey(today);
 
   const isPastDate = (date: Date) => {
-    return date < today;
+    return toDateKey(date) < todayKey;
   };
 
   const isSelectedDate = (date: Date) => {
-    return value && formatDate(date) === value;
+    return value && toDateKey(date) === value;
   };
 
   const isToday = (date: Date) => {
-    return formatDate(date) === formatDate(today);
+    return toDateKey(date) === todayKey;
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -104,7 +123,7 @@ export function CustomDatePicker({ value, onChange, placeholder = "Select date" 
 
   const handleDateClick = (date: Date) => {
     if (!isPastDate(date)) {
-      onChange(formatDate(date));
+      onChange(toDateKey(date));
       setIsOpen(false);
     }
   };
@@ -124,11 +143,13 @@ export function CustomDatePicker({ value, onChange, placeholder = "Select date" 
 
   const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  const displayValue = value ? new Date(value).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  }) : placeholder;
+  const displayValue = value && parseDateKey(value)
+    ? parseDateKey(value)!.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : placeholder;
 
   return (
     <div className="relative" ref={pickerRef}>

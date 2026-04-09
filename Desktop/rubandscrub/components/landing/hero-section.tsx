@@ -75,8 +75,8 @@ export function HeroSection() {
           </div>
         ))}
         {/* Premium gradient overlay with left-right opacity variation */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/75 to-blue-50/50" />
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-50/20 to-blue-100/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/65 via-blue-900/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/15 via-transparent to-blue-500/10" />
       </div>
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -87,15 +87,15 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
-            <div className="inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+            <div className="inline-flex rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white shadow-sm backdrop-blur-sm">
               Premium mobile car valeting across Dublin
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-[0_2px_12px_rgba(15,23,42,0.45)] sm:text-5xl lg:text-6xl">
                 Mobile Car Valeting in Dublin
               </h1>
-              <p className="max-w-xl text-lg leading-7 text-gray-700">
+              <p className="max-w-xl text-lg leading-7 text-slate-100 drop-shadow-[0_1px_8px_rgba(15,23,42,0.35)]">
                 Professional, reliable car cleaning at your home or workplace.
               </p>
             </div>
@@ -104,7 +104,7 @@ export function HeroSection() {
               {highlights.map((item) => (
                 <span
                   key={item}
-                  className="rounded-full border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-700 shadow-sm"
+                  className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white shadow-sm backdrop-blur-sm"
                 >
                   {item}
                 </span>
