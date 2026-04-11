@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Car, Sparkles, Wrench, type LucideIcon } from "lucide-react";
 import { SectionShell } from "./section-shell";
+import { fadeInUp, staggerContainer, sectionViewport } from "./motion-presets";
 
 const miniValet = [
   "Exterior wash & dry",
@@ -25,10 +26,10 @@ const fullValet = [
 ];
 
 const extras = [
-  "Seat shampoo: €20 – €40",
-  "Pet hair removal: €15 – €25",
-  "Engine bay clean: €25 – €50",
-  "Hand wax/polish: €30 – €60",
+  "Seat shampoo: EUR20 - EUR40",
+  "Pet hair removal: EUR15 - EUR25",
+  "Engine bay clean: EUR25 - EUR50",
+  "Hand wax/polish: EUR30 - EUR60",
 ];
 
 function ServiceCard({
@@ -46,10 +47,9 @@ function ServiceCard({
 }) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      viewport={{ once: true }}
+      variants={fadeInUp}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.45 }}
       className={`relative flex h-full flex-col rounded-3xl border bg-white p-8 shadow-lg transition hover:shadow-xl ${
         popular ? "border-blue-300 ring-2 ring-blue-100" : "border-gray-200"
       }`}
@@ -77,7 +77,10 @@ function ServiceCard({
         ))}
       </ul>
       <div className="mt-auto">
-        <Link href="/booking" className="w-full rounded-full bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 text-center block">
+        <Link
+          href="/booking"
+          className="block w-full rounded-full bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
+        >
           Book Now
         </Link>
       </div>
@@ -93,25 +96,25 @@ export function ServicesSection() {
       title="Clear pricing, premium finish"
       description="Choose the valet level that fits your vehicle and current condition."
     >
-      <div className="grid gap-8 lg:grid-cols-3">
-        <ServiceCard
-          title="Mini Valet"
-          price="From €40 – €60"
-          items={miniValet}
-          icon={Car}
-        />
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+        className="grid gap-8 lg:grid-cols-3"
+      >
+        <ServiceCard title="Mini Valet" price="From EUR40 - EUR60" items={miniValet} icon={Car} />
         <ServiceCard
           title="Full Valet"
-          price="From €80 – €120"
+          price="From EUR80 - EUR120"
           items={fullValet}
           icon={Sparkles}
           popular
         />
         <motion.article
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
+          variants={fadeInUp}
+          whileHover={{ y: -4 }}
+          transition={{ duration: 0.45 }}
           className="flex h-full flex-col rounded-3xl border border-gray-200 bg-white p-8 shadow-lg"
         >
           <div className="mb-6 flex items-center gap-3">
@@ -135,7 +138,8 @@ export function ServicesSection() {
             Final price may vary depending on vehicle size and condition.
           </div>
         </motion.article>
-      </div>
+      </motion.div>
     </SectionShell>
   );
 }
+

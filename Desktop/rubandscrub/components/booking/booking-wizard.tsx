@@ -1,109 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { CustomDatePicker } from "./custom-date-picker";
+import { buildBookingWhatsAppUrl } from "@/lib/booking/whatsapp";
 import { BookingSuccess } from "./booking-success";
 
 type FormData = {
   fullName: string;
-  phoneNumber: string;
+  phone: string;
   email: string;
-  houseNumber: string;
+  houseStreet: string;
   address: string;
   eircode: string;
   service: string;
   carModel: string;
-  preferredDate: string;
-  timeSlot: string;
-  notes: string;
   selectedExtras: string[];
+  notes: string;
 };
 
 const initialFormData: FormData = {
   fullName: "",
-  phoneNumber: "",
+  phone: "",
   email: "",
-  houseNumber: "",
+  houseStreet: "",
   address: "",
   eircode: "",
   service: "",
   carModel: "",
-  preferredDate: "",
-  timeSlot: "",
-  notes: "",
   selectedExtras: [],
+  notes: "",
 };
 
 const services = ["Mini Valet", "Full Valet"];
-const timeSlots = ["Morning (8:00 – 13:00)", "Afternoon (13:00 – 20:00)"];
 
 const extras = [
-  { name: "Seat shampoo", price: "€20 – €40" },
-  { name: "Pet hair removal", price: "€15 – €25" },
-  { name: "Engine bay clean", price: "€25 – €50" },
-  { name: "Hand wax/polish", price: "€30 – €60" },
+  { name: "Seat shampoo", price: "EUR20 - EUR40" },
+  { name: "Pet hair removal", price: "EUR15 - EUR25" },
+  { name: "Engine bay clean", price: "EUR25 - EUR50" },
+  { name: "Hand wax/polish", price: "EUR30 - EUR60" },
 ];
 
-function toDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function parseDateKey(dateKey: string) {
-  const [year, month, day] = dateKey.split("-").map(Number);
-
-  if (!year || !month || !day) {
-    return null;
-  }
-
-  return new Date(year, month - 1, day);
-}
-
-function getAvailableTimeSlots(selectedDate: string) {
-  if (!selectedDate) {
-    return timeSlots;
-  }
-
-  const selected = parseDateKey(selectedDate);
-
-  if (!selected) {
-    return [];
-  }
-
-  const today = new Date();
-  const todayKey = toDateKey(today);
-  const selectedKey = toDateKey(selected);
-
-  if (selectedKey !== todayKey) {
-    return timeSlots;
-  }
-
-  const currentMinutes = today.getHours() * 60 + today.getMinutes();
-
-  return timeSlots.filter((slot) => {
-    if (slot.startsWith("Morning")) {
-      return currentMinutes < 13 * 60;
-    }
-
-    if (slot.startsWith("Afternoon")) {
-      return currentMinutes < 20 * 60;
-    }
-
-    return true;
-  });
+function fieldClassName() {
+  return "mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
 }
 
 function ProgressIndicator({ currentStep }: { currentStep: number }) {
   return (
-    <div className="flex justify-center gap-2 mb-8">
-      {Array.from({ length: 5 }, (_, i) => (
+    <div className="mb-8 flex justify-center gap-2">
+      {Array.from({ length: 4 }, (_, index) => (
         <div
-          key={i}
-          className={`h-2 w-8 rounded-full ${
-            i + 1 <= currentStep ? "bg-blue-600" : "bg-gray-300"
+          key={index}
+          className={`h-2 w-8 rounded-full transition ${
+            index + 1 <= currentStep ? "bg-blue-600" : "bg-gray-300"
           }`}
         />
       ))}
@@ -111,7 +59,13 @@ function ProgressIndicator({ currentStep }: { currentStep: number }) {
   );
 }
 
-function Step1Details({ formData, setFormData }: { formData: FormData; setFormData: (data: FormData) => void }) {
+function Step1Details({
+  formData,
+  setFormData,
+}: {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+}) {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">Your Details</h2>
@@ -120,7 +74,7 @@ function Step1Details({ formData, setFormData }: { formData: FormData; setFormDa
           <span className="text-sm font-medium text-gray-700">Full Name</span>
           <input
             type="text"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             required
@@ -130,9 +84,9 @@ function Step1Details({ formData, setFormData }: { formData: FormData; setFormDa
           <span className="text-sm font-medium text-gray-700">Phone Number</span>
           <input
             type="tel"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            value={formData.phoneNumber}
-            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+            className={fieldClassName()}
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             required
           />
         </label>
@@ -140,7 +94,7 @@ function Step1Details({ formData, setFormData }: { formData: FormData; setFormDa
           <span className="text-sm font-medium text-gray-700">Email</span>
           <input
             type="email"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
@@ -151,18 +105,24 @@ function Step1Details({ formData, setFormData }: { formData: FormData; setFormDa
   );
 }
 
-function Step2Location({ formData, setFormData }: { formData: FormData; setFormData: (data: FormData) => void }) {
+function Step2Location({
+  formData,
+  setFormData,
+}: {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+}) {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">Your Location</h2>
       <div className="space-y-4">
         <label className="block">
-          <span className="text-sm font-medium text-gray-700">House Number / Street</span>
+          <span className="text-sm font-medium text-gray-700">House / Street</span>
           <input
             type="text"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            value={formData.houseNumber}
-            onChange={(e) => setFormData({ ...formData, houseNumber: e.target.value })}
+            className={fieldClassName()}
+            value={formData.houseStreet}
+            onChange={(e) => setFormData({ ...formData, houseStreet: e.target.value })}
             required
           />
         </label>
@@ -170,7 +130,7 @@ function Step2Location({ formData, setFormData }: { formData: FormData; setFormD
           <span className="text-sm font-medium text-gray-700">Address</span>
           <input
             type="text"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.address}
             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             required
@@ -180,7 +140,7 @@ function Step2Location({ formData, setFormData }: { formData: FormData; setFormD
           <span className="text-sm font-medium text-gray-700">Eircode</span>
           <input
             type="text"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.eircode}
             onChange={(e) => setFormData({ ...formData, eircode: e.target.value })}
           />
@@ -190,12 +150,19 @@ function Step2Location({ formData, setFormData }: { formData: FormData; setFormD
   );
 }
 
-function Step3Service({ formData, setFormData }: { formData: FormData; setFormData: (data: FormData) => void }) {
+function Step3Service({
+  formData,
+  setFormData,
+}: {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+}) {
   const toggleExtra = (extraName: string) => {
-    const newExtras = formData.selectedExtras.includes(extraName)
-      ? formData.selectedExtras.filter(e => e !== extraName)
+    const selectedExtras = formData.selectedExtras.includes(extraName)
+      ? formData.selectedExtras.filter((extra) => extra !== extraName)
       : [...formData.selectedExtras, extraName];
-    setFormData({ ...formData, selectedExtras: newExtras });
+
+    setFormData({ ...formData, selectedExtras });
   };
 
   return (
@@ -205,7 +172,7 @@ function Step3Service({ formData, setFormData }: { formData: FormData; setFormDa
         <label className="block">
           <span className="text-sm font-medium text-gray-700">Service</span>
           <select
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.service}
             onChange={(e) => setFormData({ ...formData, service: e.target.value })}
             required
@@ -222,7 +189,7 @@ function Step3Service({ formData, setFormData }: { formData: FormData; setFormDa
           <span className="text-sm font-medium text-gray-700">Car Model</span>
           <input
             type="text"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            className={fieldClassName()}
             value={formData.carModel}
             onChange={(e) => setFormData({ ...formData, carModel: e.target.value })}
             required
@@ -230,16 +197,18 @@ function Step3Service({ formData, setFormData }: { formData: FormData; setFormDa
         </label>
         <div>
           <span className="text-sm font-medium text-gray-700">Optional Extras</span>
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-3">
             {extras.map((extra) => (
-              <label key={extra.name} className="flex items-center gap-3 cursor-pointer">
+              <label key={extra.name} className="flex cursor-pointer items-center gap-3">
                 <input
                   type="checkbox"
                   checked={formData.selectedExtras.includes(extra.name)}
                   onChange={() => toggleExtra(extra.name)}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700">{extra.name} ({extra.price})</span>
+                <span className="text-sm text-gray-700">
+                  {extra.name} ({extra.price})
+                </span>
               </label>
             ))}
           </div>
@@ -249,72 +218,12 @@ function Step3Service({ formData, setFormData }: { formData: FormData; setFormDa
   );
 }
 
-function Step4Booking({
+function Step4Review({
   formData,
-  setFormData,
-  availableTimeSlots,
+  onSubmit,
+  isLoading,
+  error,
 }: {
-  formData: FormData;
-  setFormData: (data: FormData) => void;
-  availableTimeSlots: string[];
-}) {
-  const isSelectedDateToday = formData.preferredDate === toDateKey(new Date());
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">Preferred Booking</h2>
-      <div className="space-y-4">
-        <label className="block">
-          <span className="text-sm font-medium text-gray-700">Preferred Date</span>
-          <CustomDatePicker
-            value={formData.preferredDate}
-            onChange={(date) => setFormData({ ...formData, preferredDate: date })}
-            placeholder="Select preferred date"
-          />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium text-gray-700">Preferred Time Slot</span>
-          {availableTimeSlots.length > 0 ? (
-            <select
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-              value={formData.timeSlot}
-              onChange={(e) => setFormData({ ...formData, timeSlot: e.target.value })}
-              required
-            >
-              <option value="">Select a time slot</option>
-              {availableTimeSlots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="mt-1 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              No time slots available for today. Please choose another date.
-            </div>
-          )}
-        </label>
-        {isSelectedDateToday && availableTimeSlots.length > 0 ? (
-          <p className="text-sm text-gray-600">
-            Only future-valid time slots are shown for today.
-          </p>
-        ) : null}
-        <label className="block">
-          <span className="text-sm font-medium text-gray-700">Notes</span>
-          <textarea
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            rows={3}
-            value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            placeholder="Add any useful details about the vehicle or location"
-          />
-        </label>
-      </div>
-    </div>
-  );
-}
-
-function Step5Review({ formData, onSubmit, isLoading, error }: { 
   formData: FormData;
   onSubmit: () => void;
   isLoading: boolean;
@@ -322,29 +231,34 @@ function Step5Review({ formData, onSubmit, isLoading, error }: {
 }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-gray-900">Review & Submit</h2>
-      <div className="space-y-4 rounded-lg bg-gray-50 p-4">
+      <h2 className="text-xl font-semibold text-gray-900">Review & WhatsApp</h2>
+      <div className="space-y-4 rounded-2xl bg-gray-50 p-4">
         <div>
           <h3 className="font-medium text-gray-900">Your Details</h3>
           <p className="text-sm text-gray-600">{formData.fullName}</p>
-          <p className="text-sm text-gray-600">{formData.phoneNumber}</p>
+          <p className="text-sm text-gray-600">{formData.phone}</p>
           <p className="text-sm text-gray-600">{formData.email}</p>
         </div>
         <div>
           <h3 className="font-medium text-gray-900">Location</h3>
-          <p className="text-sm text-gray-600">{formData.houseNumber}, {formData.address}</p>
-          <p className="text-sm text-gray-600">{formData.eircode}</p>
+          <p className="text-sm text-gray-600">
+            {formData.houseStreet}
+            {formData.address ? `, ${formData.address}` : ""}
+          </p>
+          <p className="text-sm text-gray-600">{formData.eircode || "No Eircode provided"}</p>
         </div>
         <div>
           <h3 className="font-medium text-gray-900">Service</h3>
-          <p className="text-sm text-gray-600">{formData.service} - {formData.carModel}</p>
+          <p className="text-sm text-gray-600">
+            {formData.service} - {formData.carModel}
+          </p>
         </div>
         <div>
           <h3 className="font-medium text-gray-900">Optional Extras</h3>
           {formData.selectedExtras.length > 0 ? (
             <ul className="text-sm text-gray-600">
               {formData.selectedExtras.map((extra) => (
-                <li key={extra}>• {extra}</li>
+                <li key={extra}>- {extra}</li>
               ))}
             </ul>
           ) : (
@@ -352,27 +266,27 @@ function Step5Review({ formData, onSubmit, isLoading, error }: {
           )}
         </div>
         <div>
-          <h3 className="font-medium text-gray-900">Booking</h3>
-          <p className="text-sm text-gray-600">{formData.preferredDate} - {formData.timeSlot}</p>
-          {formData.notes && <p className="text-sm text-gray-600">Notes: {formData.notes}</p>}
+          <h3 className="font-medium text-gray-900">Notes</h3>
+          <p className="text-sm text-gray-600">{formData.notes || "No notes provided."}</p>
         </div>
       </div>
       <p className="text-sm text-gray-600">
-        We will confirm your booking within 2 hours during business hours.
+        Your WhatsApp message will include all details so the team can arrange the day and time
+        with you directly.
       </p>
-      
+
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
-      
+
       <button
         onClick={onSubmit}
         disabled={isLoading}
-        className="w-full rounded-lg bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        className="inline-flex w-full items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isLoading ? "Submitting..." : "Send Booking Request"}
+        {isLoading ? "Opening WhatsApp..." : "Send Booking Request"}
       </button>
     </div>
   );
@@ -383,92 +297,73 @@ export function BookingWizard() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const availableTimeSlots = getAvailableTimeSlots(formData.preferredDate);
-
-  useEffect(() => {
-    if (formData.timeSlot && !availableTimeSlots.includes(formData.timeSlot)) {
-      setFormData((current) => ({
-        ...current,
-        timeSlot: "",
-      }));
-    }
-  }, [availableTimeSlots, formData.timeSlot]);
-
   const nextStep = () => {
-    if (currentStep < 5) setCurrentStep(currentStep + 1);
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
   const validateStep = () => {
     switch (currentStep) {
       case 1:
-        return formData.fullName && formData.phoneNumber && formData.email;
+        return Boolean(formData.fullName && formData.phone && formData.email);
       case 2:
-        return formData.houseNumber && formData.address;
+        return Boolean(formData.houseStreet && formData.address);
       case 3:
-        return formData.service && formData.carModel;
-      case 4:
-        return (
-          formData.preferredDate &&
-          availableTimeSlots.length > 0 &&
-          formData.timeSlot &&
-          availableTimeSlots.includes(formData.timeSlot)
-        );
+        return Boolean(formData.service && formData.carModel);
       default:
         return true;
     }
   };
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    setError(null);
+  const bookingSummary = useMemo(
+    () => ({
+      fullName: formData.fullName,
+      phone: formData.phone,
+      email: formData.email,
+      houseStreet: formData.houseStreet,
+      address: formData.address,
+      eircode: formData.eircode,
+      service: formData.service,
+      carModel: formData.carModel,
+      extras: formData.selectedExtras,
+      notes: formData.notes,
+    }),
+    [formData]
+  );
 
+  const handleSubmit = () => {
     try {
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          phone: formData.phoneNumber,
-          email: formData.email,
-          houseNumber: formData.houseNumber,
-          address: formData.address,
-          eircode: formData.eircode,
-          service: formData.service,
-          carModel: formData.carModel,
-          selectedExtras: formData.selectedExtras,
-          preferredDate: formData.preferredDate,
-          timeSlot: formData.timeSlot,
-          notes: formData.notes,
-        }),
-      });
+      setIsLoading(true);
+      setError(null);
 
-      const data = await response.json();
+      const url = buildBookingWhatsAppUrl(bookingSummary);
+      setWhatsappUrl(url);
 
-      if (!response.ok) {
-        setError(data.error || "Failed to submit booking. Please try again.");
-        setIsLoading(false);
-        return;
+      const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+      if (!newWindow) {
+        window.location.href = url;
       }
 
       setIsSuccess(true);
-      setIsLoading(false);
     } catch {
-      setError("Network error. Please check your connection and try again.");
+      setError("Unable to open WhatsApp right now. Please try again or use the WhatsApp button.");
+    } finally {
       setIsLoading(false);
     }
   };
 
-  // Show success state
-  if (isSuccess) {
-    return <BookingSuccess />;
+  if (isSuccess && whatsappUrl) {
+    return <BookingSuccess whatsappUrl={whatsappUrl} />;
   }
 
   const renderStep = () => {
@@ -481,15 +376,7 @@ export function BookingWizard() {
         return <Step3Service formData={formData} setFormData={setFormData} />;
       case 4:
         return (
-          <Step4Booking
-            formData={formData}
-            setFormData={setFormData}
-            availableTimeSlots={availableTimeSlots}
-          />
-        );
-      case 5:
-        return (
-          <Step5Review
+          <Step4Review
             formData={formData}
             onSubmit={handleSubmit}
             isLoading={isLoading}
@@ -502,29 +389,33 @@ export function BookingWizard() {
   };
 
   return (
-    <div className="rounded-2xl bg-white p-8 shadow-lg">
+    <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-xl">
       <ProgressIndicator currentStep={currentStep} />
       {renderStep()}
-      <div className="mt-8 flex justify-between">
-        {currentStep > 1 && currentStep < 5 && (
+
+      <div className="mt-8 flex items-center justify-between">
+        {currentStep > 1 && currentStep < 4 ? (
           <button
             onClick={prevStep}
-            className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-2xl border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-50"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
           </button>
+        ) : (
+          <span />
         )}
-        {currentStep < 5 && (
+
+        {currentStep < 4 ? (
           <button
             onClick={nextStep}
             disabled={!validateStep()}
-            className="ml-auto flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="ml-auto inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
             <ArrowRight className="h-4 w-4" />
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
 
 export function PromotionalSection() {
   return (
@@ -11,7 +12,7 @@ export function PromotionalSection() {
               Ready to Book Your Mobile Valet?
             </h2>
             <p className="text-lg text-gray-600">
-              Get your car professionally cleaned at your home or workplace. 
+              Get your car professionally cleaned at your home or workplace.
               Quick booking, reliable service, premium results.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -19,15 +20,15 @@ export function PromotionalSection() {
                 className="inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-blue-700 hover:shadow-xl"
                 href="/booking"
               >
-                Book Now
+                Book via WhatsApp
               </Link>
               <a
                 className="inline-flex items-center justify-center rounded-full border-2 border-blue-600 bg-white px-8 py-4 text-base font-semibold text-blue-600 transition hover:bg-blue-50"
-                href="https://wa.me/353000000000"
+                href={getWhatsAppBaseUrl()}
                 target="_blank"
                 rel="noreferrer"
               >
-                Call Us
+                WhatsApp Us
               </a>
             </div>
           </div>

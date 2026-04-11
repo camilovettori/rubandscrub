@@ -6,10 +6,11 @@ export default function BookingPage() {
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-            Book Your Mobile Valet
+            Request Your Mobile Valet
           </h1>
           <p className="mt-2 text-lg text-gray-600">
-            Complete your booking in just a few steps
+            Complete your request in just a few steps and we&apos;ll open WhatsApp with everything
+            ready to send.
           </p>
         </div>
         <BookingWizard />

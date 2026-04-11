@@ -1,4 +1,5 @@
 import { BookingCTASection } from "@/components/landing/booking-cta-section";
+import { BeforeAfterSection } from "@/components/landing/before-after-section";
 import { HeroSection } from "@/components/landing/hero-section";
 import { HowItWorksSection } from "@/components/landing/how-it-works-section";
 import { PromotionalSection } from "@/components/landing/promotional-section";
@@ -13,6 +14,7 @@ export default function HomePage() {
       <div className="space-y-20">
         <HeroSection />
         <ServicesSection />
+        <BeforeAfterSection />
         <HowItWorksSection />
         <WhyChooseSection />
         <ReviewsSection />

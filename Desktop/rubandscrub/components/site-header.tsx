@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/config/site";
+import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,7 +55,7 @@ export function SiteHeader() {
           </Link>
           <a
             className="inline-flex rounded-full border border-blue-600 bg-white px-5 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 hover:border-blue-700"
-            href="https://wa.me/353000000000"
+            href={getWhatsAppBaseUrl()}
             target="_blank"
             rel="noreferrer"
           >
@@ -116,7 +117,7 @@ export function SiteHeader() {
               </Link>
               <a
                 className="inline-flex items-center justify-center rounded-full border border-blue-600 bg-white px-6 py-3 text-base font-semibold text-blue-600 transition hover:bg-blue-50 hover:border-blue-700"
-                href="https://wa.me/353000000000"
+                href={getWhatsAppBaseUrl()}
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => setIsMenuOpen(false)}

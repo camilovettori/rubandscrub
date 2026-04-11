@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { SectionShell } from "./section-shell";
+import { fadeInUp, staggerContainer, sectionViewport } from "./motion-presets";
 
 const testimonials = [
   {
     name: "Sarah Murphy",
     location: "Dublin 4",
     rating: 5,
-    text: "Amazing service! The team arrived on time and left my car looking brand new. Will definitely book again.",
+    text: "Amazing service. The team arrived on time and left my car looking brand new. I will definitely book again.",
   },
   {
     name: "John Kelly",
@@ -21,7 +22,7 @@ const testimonials = [
     name: "Emma Byrne",
     location: "Dublin 6",
     rating: 5,
-    text: "Outstanding attention to detail. My car has never looked this good. Highly recommend!",
+    text: "Outstanding attention to detail. My car has never looked this good. Highly recommend.",
   },
 ];
 
@@ -46,14 +47,19 @@ export function ReviewsSection() {
       title="What our customers say"
       description="Don't just take our word for it - hear from Dublin drivers who've experienced our service."
     >
-      <div className="grid gap-6 md:grid-cols-3">
-        {testimonials.map((testimonial, index) => (
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={sectionViewport}
+        className="grid gap-6 md:grid-cols-3"
+      >
+        {testimonials.map((testimonial) => (
           <motion.article
             key={testimonial.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
-            viewport={{ once: true }}
+            variants={fadeInUp}
+            whileHover={{ y: -3 }}
+            transition={{ duration: 0.45 }}
             className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg"
           >
             <div className="mb-4">
@@ -66,7 +72,7 @@ export function ReviewsSection() {
             </div>
           </motion.article>
         ))}
-      </div>
+      </motion.div>
       <div className="mt-12 text-center">
         <p className="text-sm text-gray-600">
           Join hundreds of satisfied Dublin drivers who trust us with their vehicles.
@@ -75,3 +81,4 @@ export function ReviewsSection() {
     </SectionShell>
   );
 }
+
