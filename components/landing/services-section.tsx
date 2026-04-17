@@ -38,29 +38,33 @@ function ServiceCard({
   items,
   icon: Icon,
   popular = false,
+  trustLabel,
 }: {
   title: string;
   price: string;
   items: string[];
   icon: LucideIcon;
   popular?: boolean;
+  trustLabel?: string;
 }) {
   return (
     <motion.article
       variants={fadeInUp}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.45 }}
-      className={`relative flex h-full flex-col rounded-3xl border bg-white p-8 shadow-lg transition hover:shadow-xl ${
-        popular ? "border-blue-300 ring-2 ring-blue-100" : "border-gray-200"
+      className={`relative flex h-full flex-col rounded-[28px] border bg-white p-8 shadow-lg transition duration-200 hover:shadow-2xl ${
+        popular
+          ? "scale-[1.03] border-sky-200 bg-gradient-to-br from-white via-sky-50 to-blue-50 shadow-[0_24px_70px_-28px_rgba(59,130,246,0.45)] ring-1 ring-sky-200/70"
+          : "border-gray-200"
       }`}
     >
       {popular && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-4 py-1 text-xs font-semibold text-white">
-          Most Popular
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-sky-200 bg-sky-600 px-4 py-1 text-xs font-semibold text-white shadow-lg shadow-sky-200/40">
+          {trustLabel || "Most booked"}
         </div>
       )}
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-sky-50">
           <Icon className="h-6 w-6 text-blue-600" />
         </div>
         <div>
@@ -79,7 +83,7 @@ function ServiceCard({
       <div className="mt-auto">
         <Link
           href="/booking"
-          className="block w-full rounded-full bg-blue-600 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="block w-full rounded-full bg-blue-600 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-700/25"
         >
           Book Now
         </Link>
@@ -110,15 +114,16 @@ export function ServicesSection() {
           items={fullValet}
           icon={Sparkles}
           popular
+          trustLabel="Best value"
         />
         <motion.article
           variants={fadeInUp}
           whileHover={{ y: -4 }}
           transition={{ duration: 0.45 }}
-          className="flex h-full flex-col rounded-3xl border border-gray-200 bg-white p-8 shadow-lg"
+          className="flex h-full flex-col rounded-[28px] border border-gray-200 bg-white p-8 shadow-lg transition duration-200 hover:shadow-2xl"
         >
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-sky-50">
               <Wrench className="h-6 w-6 text-blue-600" />
             </div>
             <div>

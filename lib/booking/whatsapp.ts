@@ -1,5 +1,3 @@
-import { contactConfig } from "@/lib/config/contact";
-
 export type BookingWhatsAppDetails = {
   fullName: string;
   phone: string;
@@ -21,8 +19,19 @@ function joinValue(value: string | string[] | undefined) {
   return value?.trim() ? value.trim() : "None";
 }
 
-export function getWhatsAppBaseUrl() {
-  return `https://wa.me/${contactConfig.whatsappNumber}`;
+function stripPhoneNumber(phone: string) {
+  return phone.replace(/[^\d]/g, "");
+}
+
+export function getWhatsAppBaseUrl(whatsappNumber: string) {
+  const sanitized = stripPhoneNumber(whatsappNumber);
+  return sanitized ? `https://wa.me/${sanitized}` : "https://wa.me/";
+}
+
+export function formatWhatsAppDisplay(whatsappNumber: string) {
+  const sanitized = stripPhoneNumber(whatsappNumber);
+
+  return sanitized ? `+${sanitized}` : "Not configured";
 }
 
 export function buildBookingWhatsAppMessage(details: BookingWhatsAppDetails) {
@@ -45,8 +54,8 @@ export function buildBookingWhatsAppMessage(details: BookingWhatsAppDetails) {
   return lines.join("\n");
 }
 
-export function buildBookingWhatsAppUrl(details: BookingWhatsAppDetails) {
+export function buildBookingWhatsAppUrl(details: BookingWhatsAppDetails, whatsappNumber: string) {
   const message = buildBookingWhatsAppMessage(details);
-  return `${getWhatsAppBaseUrl()}?text=${encodeURIComponent(message)}`;
+  return `${getWhatsAppBaseUrl(whatsappNumber)}?text=${encodeURIComponent(message)}`;
 }
 

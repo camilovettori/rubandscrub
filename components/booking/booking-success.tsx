@@ -12,14 +12,14 @@ export function BookingSuccess({ whatsappUrl }: { whatsappUrl: string }) {
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-gray-900">WhatsApp is opening now</h2>
           <p className="text-lg text-gray-600">
-            Your booking request is ready. If WhatsApp did not open automatically, tap the button
-            below.
+            Your request was received and an acknowledgement email is on the way. If WhatsApp did
+            not open automatically, tap the button below.
           </p>
         </div>
 
         <p className="max-w-md text-gray-600">
           The message already includes your details, vehicle, extras, and notes so the team can
-          arrange a day and time with you quickly.
+          contact you shortly to confirm the visit.
         </p>
 
         <div className="flex flex-col gap-3 sm:flex-row">

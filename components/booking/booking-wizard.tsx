@@ -292,7 +292,7 @@ function Step4Review({
   );
 }
 
-export function BookingWizard() {
+export function BookingWizard({ whatsappNumber }: { whatsappNumber: string }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
@@ -341,12 +341,26 @@ export function BookingWizard() {
     [formData]
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      const url = buildBookingWhatsAppUrl(bookingSummary);
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingSummary),
+      });
+
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to send the confirmation email.");
+      }
+
+      const url = buildBookingWhatsAppUrl(bookingSummary, whatsappNumber);
       setWhatsappUrl(url);
 
       const newWindow = window.open(url, "_blank", "noopener,noreferrer");
@@ -356,7 +370,7 @@ export function BookingWizard() {
 
       setIsSuccess(true);
     } catch {
-      setError("Unable to open WhatsApp right now. Please try again or use the WhatsApp button.");
+      setError("Unable to send the confirmation email right now. Please try again.");
     } finally {
       setIsLoading(false);
     }

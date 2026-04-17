@@ -17,14 +17,14 @@ export function SectionShell({
 }: SectionShellProps) {
   return (
     <section id={id} className="scroll-mt-24">
-      <div className="mb-12 space-y-4 text-center">
+      <div className="mb-14 space-y-4 text-center">
         <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
           {eyebrow}
         </p>
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
           {title}
         </h2>
-        <p className="mx-auto max-w-2xl text-lg leading-7 text-gray-600">
+        <p className="mx-auto max-w-2xl text-lg leading-8 text-gray-600">
           {description}
         </p>
       </div>

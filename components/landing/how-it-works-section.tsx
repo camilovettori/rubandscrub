@@ -49,12 +49,12 @@ export function HowItWorksSection() {
             variants={fadeInUp}
             whileHover={{ y: -4 }}
             transition={{ duration: 0.45 }}
-            className="relative rounded-3xl border border-gray-200 bg-white p-6 shadow-lg"
+            className="group relative rounded-[28px] border border-gray-200 bg-white p-6 shadow-lg transition duration-300 hover:shadow-2xl"
           >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-sky-50 shadow-sm transition duration-300 group-hover:scale-105">
               <step.icon className="h-6 w-6 text-blue-600" />
             </div>
-            <div className="absolute -top-2 -left-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+            <div className="absolute -top-2 -left-2 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-200/60">
               {index + 1}
             </div>
             <h3 className="mb-2 text-lg font-semibold text-gray-900">{step.title}</h3>

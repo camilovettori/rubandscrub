@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { SectionShell } from "./section-shell";
-import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { formatWhatsAppDisplay, getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
 
-export function ContactSection() {
+export function ContactSection({ whatsappNumber }: { whatsappNumber: string }) {
+  const whatsappHref = getWhatsAppBaseUrl(whatsappNumber);
+  const whatsappDisplay = formatWhatsAppDisplay(whatsappNumber);
+
   return (
     <SectionShell
       id="contact"
@@ -14,8 +17,8 @@ export function ContactSection() {
     >
       <div className="flex flex-col gap-6 rounded-3xl border border-gray-200 bg-white p-8 shadow-lg sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-3">
-          <p className="text-lg font-semibold text-gray-900">Phone: 01 234 5678</p>
-          <p className="text-gray-600">WhatsApp: Fast response for booking enquiries</p>
+          <p className="text-lg font-semibold text-gray-900">WhatsApp: {whatsappDisplay}</p>
+          <p className="text-gray-600">Fast response for booking enquiries</p>
           <p className="text-sm text-gray-500">Operating hours: Mon-Sat 8:00-20:00</p>
         </div>
         <div className="flex flex-col gap-4 sm:flex-row">
@@ -27,7 +30,7 @@ export function ContactSection() {
           </Link>
           <a
             className="inline-flex items-center justify-center rounded-full border-2 border-blue-600 bg-white px-8 py-4 text-base font-semibold text-blue-600 transition hover:bg-blue-50"
-            href={getWhatsAppBaseUrl()}
+            href={whatsappHref}
             target="_blank"
             rel="noreferrer"
           >

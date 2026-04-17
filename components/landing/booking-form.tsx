@@ -15,7 +15,7 @@ function fieldClassName() {
   return "mt-2 w-full rounded-2xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
 }
 
-export function BookingForm() {
+export function BookingForm({ whatsappNumber }: { whatsappNumber: string }) {
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -33,7 +33,7 @@ export function BookingForm() {
       carModel: String(formData.get("carModel") ?? ""),
       extras: selectedExtras,
       notes: String(formData.get("notes") ?? ""),
-    });
+    }, whatsappNumber);
 
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }

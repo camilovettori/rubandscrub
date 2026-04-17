@@ -1,6 +1,9 @@
 import { BookingWizard } from "@/components/booking/booking-wizard";
+import { getSiteSettings } from "@/lib/site-settings";
 
-export default function BookingPage() {
+export default async function BookingPage() {
+  const siteSettings = await getSiteSettings();
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-cyan-50 py-12">
       <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
@@ -13,7 +16,7 @@ export default function BookingPage() {
             ready to send.
           </p>
         </div>
-        <BookingWizard />
+        <BookingWizard whatsappNumber={siteSettings.whatsapp_number} />
       </div>
     </main>
   );

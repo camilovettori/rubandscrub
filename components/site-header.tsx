@@ -7,8 +7,9 @@ import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/config/site";
 import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
 
-export function SiteHeader() {
+export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const whatsappHref = getWhatsAppBaseUrl(whatsappNumber);
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur-xl shadow-sm">
@@ -55,7 +56,7 @@ export function SiteHeader() {
           </Link>
           <a
             className="inline-flex rounded-full border border-blue-600 bg-white px-5 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50 hover:border-blue-700"
-            href={getWhatsAppBaseUrl()}
+            href={whatsappHref}
             target="_blank"
             rel="noreferrer"
           >
@@ -117,7 +118,7 @@ export function SiteHeader() {
               </Link>
               <a
                 className="inline-flex items-center justify-center rounded-full border border-blue-600 bg-white px-6 py-3 text-base font-semibold text-blue-600 transition hover:bg-blue-50 hover:border-blue-700"
-                href={getWhatsAppBaseUrl()}
+                href={whatsappHref}
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => setIsMenuOpen(false)}
