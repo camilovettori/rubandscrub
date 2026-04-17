@@ -22,6 +22,7 @@ export async function sendEmail({ to, subject, text, html, replyTo }: SendEmailI
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
+      "User-Agent": "rubandscrub/1.0",
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

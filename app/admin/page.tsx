@@ -1,15 +1,49 @@
 import Link from "next/link";
 import { ReviewModerationActions } from "@/components/admin/review-moderation-actions";
+import { SupportCard } from "@/components/admin/support-card";
+import { SubscriptionCard } from "@/components/admin/subscription-card";
 import { SiteSettingsForm } from "@/components/admin/site-settings-form";
 import { requireAdminPage } from "@/lib/auth/admin";
+import {
+  type BillingSubscriptionSnapshotRow,
+  getBillingSubscriptionSnapshot,
+  syncBillingSubscriptionSnapshot,
+} from "@/lib/billing-subscriptions";
 import { getPendingReviews, type AdminReviewCard } from "@/lib/reviews";
 import { getSiteSettings } from "@/lib/site-settings";
+import {
+  getMonthlySupportRequestUsage,
+  SUPPORT_REQUEST_MONTHLY_LIMIT,
+} from "@/lib/support-requests";
 
 export default async function AdminPage() {
   await requireAdminPage();
   const siteSettings = await getSiteSettings();
+  let billingSubscription: BillingSubscriptionSnapshotRow | null = null;
+  let supportUsage = {
+    usedThisMonth: 0,
+    limit: SUPPORT_REQUEST_MONTHLY_LIMIT,
+  };
   let pendingReviews: AdminReviewCard[] = [];
   let reviewsError: string | null = null;
+
+  try {
+    await syncBillingSubscriptionSnapshot();
+  } catch (error) {
+    console.error("Billing snapshot sync error:", error);
+  }
+
+  try {
+    billingSubscription = await getBillingSubscriptionSnapshot();
+  } catch (error) {
+    console.error("Billing snapshot load error:", error);
+  }
+
+  try {
+    supportUsage = await getMonthlySupportRequestUsage();
+  } catch (error) {
+    console.error("Support usage load error:", error);
+  }
 
   try {
     pendingReviews = await getPendingReviews(3);
@@ -115,6 +149,46 @@ export default async function AdminPage() {
                 </article>
               ))
             )}
+          </div>
+        </section>
+
+        <section className="rounded-[24px] border border-slate-200 bg-white px-6 py-6 shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                Support
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-900">
+                Support requests
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                The monthly plan includes 2 support requests per month for admin help.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-5">
+            <SupportCard initialUsage={supportUsage.usedThisMonth} />
+          </div>
+        </section>
+
+        <section className="rounded-[24px] border border-slate-200 bg-white px-6 py-6 shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
+                Billing
+              </p>
+              <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-900">
+                Subscription details
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                View the current plan and billing status for this account.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-5">
+            <SubscriptionCard snapshot={billingSubscription} />
           </div>
         </section>
       </div>
