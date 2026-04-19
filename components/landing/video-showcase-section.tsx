@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Play, X } from "lucide-react";
@@ -42,31 +42,54 @@ type ShowcaseItem = {
 
 function ModalVideoTile({
   item,
+  side,
   isActive,
   onActivate,
+  onPlay,
+  onPause,
+  onEnded,
+  videoRef,
 }: {
   item: ShowcaseItem;
+  side: "left" | "right";
   isActive: boolean;
-  onActivate: () => void;
+  onActivate: (side: "left" | "right") => void;
+  onPlay: (side: "left" | "right") => void;
+  onPause: (side: "left" | "right") => void;
+  onEnded: (side: "left" | "right") => void;
+  videoRef: RefObject<HTMLVideoElement | null>;
 }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+
   return (
     <div className="overflow-hidden rounded-[24px] border border-white/10 bg-white/5 shadow-[0_16px_50px_-28px_rgba(15,23,42,0.9)]">
       <div className="relative aspect-video overflow-hidden bg-black">
         <video
+          ref={videoRef}
           className="h-full w-full object-cover"
-          src={isActive ? item.videoSrc : undefined}
+          src={item.videoSrc}
           poster={item.thumbnailSrc}
-          preload={isActive ? "metadata" : "none"}
+          preload="none"
           controls={isActive}
-          muted
-          autoPlay={isActive}
           playsInline
+          onPlay={() => {
+            setIsPlaying(true);
+            onPlay(side);
+          }}
+          onPause={() => {
+            setIsPlaying(false);
+            onPause(side);
+          }}
+          onEnded={() => {
+            setIsPlaying(false);
+            onEnded(side);
+          }}
         />
 
-        {!isActive ? (
+        {!isPlaying && (
           <button
             type="button"
-            onClick={onActivate}
+            onClick={() => onActivate(side)}
             className="group absolute inset-0 z-10 block h-full w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             aria-label={`Play ${item.title}`}
           >
@@ -77,17 +100,6 @@ function ModalVideoTile({
               </span>
             </div>
           </button>
-        ) : (
-          <video
-            className="h-full w-full object-cover"
-            src={item.videoSrc}
-            poster={item.thumbnailSrc}
-            preload="metadata"
-            controls
-            muted
-            autoPlay
-            playsInline
-          />
         )}
       </div>
 
@@ -150,16 +162,24 @@ function ShowcaseTile({
 
 export function VideoShowcaseSection() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeModalLabel, setActiveModalLabel] = useState<string | null>(null);
+  const [activePlayer, setActivePlayer] = useState<"left" | "right" | null>(null);
   const modalTitleId = useId();
   const modalDescriptionId = useId();
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const previousOverflowRef = useRef<string | null>(null);
+  const leftVideoRef = useRef<HTMLVideoElement | null>(null);
+  const rightVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  const pauseAllPlayers = () => {
+    leftVideoRef.current?.pause();
+    rightVideoRef.current?.pause();
+  };
 
   useEffect(() => {
     if (!isOpen) {
-      setActiveModalLabel(null);
+      setActivePlayer(null);
+      pauseAllPlayers();
       if (previousOverflowRef.current !== null) {
         document.body.style.overflow = previousOverflowRef.current;
         previousOverflowRef.current = null;
@@ -184,6 +204,59 @@ export function VideoShowcaseSection() {
       window.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (activePlayer === "left") {
+      rightVideoRef.current?.pause();
+    }
+
+    if (activePlayer === "right") {
+      leftVideoRef.current?.pause();
+    }
+  }, [activePlayer]);
+
+  const handleActivate = (side: "left" | "right") => {
+    setActivePlayer(side);
+
+    const currentVideo = side === "left" ? leftVideoRef.current : rightVideoRef.current;
+    const otherVideo = side === "left" ? rightVideoRef.current : leftVideoRef.current;
+
+    otherVideo?.pause();
+    if (currentVideo) {
+      currentVideo.muted = false;
+      currentVideo.volume = 1;
+    }
+    void currentVideo?.play().catch(() => {
+      setActivePlayer(null);
+    });
+  };
+
+  const handlePlay = (side: "left" | "right") => {
+    setActivePlayer(side);
+    const otherVideo = side === "left" ? rightVideoRef.current : leftVideoRef.current;
+    otherVideo?.pause();
+
+    const currentVideo = side === "left" ? leftVideoRef.current : rightVideoRef.current;
+    if (currentVideo) {
+      currentVideo.muted = false;
+      currentVideo.volume = 1;
+    }
+  };
+
+  const handlePause = (side: "left" | "right") => {
+    const currentVideo = side === "left" ? leftVideoRef.current : rightVideoRef.current;
+    const otherVideo = side === "left" ? rightVideoRef.current : leftVideoRef.current;
+
+    if (activePlayer === side && currentVideo?.paused && otherVideo?.paused) {
+      setActivePlayer(null);
+    }
+  };
+
+  const handleEnded = (side: "left" | "right") => {
+    if (activePlayer === side) {
+      setActivePlayer(null);
+    }
+  };
 
   return (
     <>
@@ -271,8 +344,16 @@ export function VideoShowcaseSection() {
                 <ModalVideoTile
                   key={`modal-${item.label}`}
                   item={item}
-                  isActive={activeModalLabel === item.label}
-                  onActivate={() => setActiveModalLabel(item.label)}
+                  side={item.label === "MOBILE VALETING" ? "left" : "right"}
+                  isActive={
+                    (item.label === "MOBILE VALETING" && activePlayer === "left") ||
+                    (item.label === "PROFESSIONAL FINISH" && activePlayer === "right")
+                  }
+                  videoRef={item.label === "MOBILE VALETING" ? leftVideoRef : rightVideoRef}
+                  onActivate={handleActivate}
+                  onPlay={handlePlay}
+                  onPause={handlePause}
+                  onEnded={handleEnded}
                 />
               ))}
             </div>
