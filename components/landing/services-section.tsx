@@ -2,17 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Car, Sparkles, Wrench, type LucideIcon } from "lucide-react";
+import { Sparkles, Wrench, type LucideIcon } from "lucide-react";
 import { SectionShell } from "./section-shell";
 import { fadeInUp, staggerContainer, sectionViewport } from "./motion-presets";
-
-const miniValet = [
-  "Exterior wash & dry",
-  "Wheel clean",
-  "Interior vacuum",
-  "Dashboard & plastics wiped",
-  "Windows cleaned (inside & out)",
-];
 
 const fullValet = [
   "Full exterior wash & dry",
@@ -39,6 +31,7 @@ function ServiceCard({
   icon: Icon,
   popular = false,
   trustLabel,
+  note,
 }: {
   title: string;
   price: string;
@@ -46,6 +39,7 @@ function ServiceCard({
   icon: LucideIcon;
   popular?: boolean;
   trustLabel?: string;
+  note?: string;
 }) {
   return (
     <motion.article
@@ -80,6 +74,11 @@ function ServiceCard({
           </li>
         ))}
       </ul>
+      {note && (
+        <div className="mb-6 rounded-2xl border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-slate-600">
+          {note}
+        </div>
+      )}
       <div className="mt-auto">
         <Link
           href="/booking"
@@ -105,16 +104,16 @@ export function ServicesSection() {
         initial="hidden"
         whileInView="visible"
         viewport={sectionViewport}
-        className="grid gap-8 lg:grid-cols-3"
+        className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]"
       >
-        <ServiceCard title="Mini Valet" price="From EUR40 - EUR60" items={miniValet} icon={Car} />
         <ServiceCard
           title="Full Valet"
-          price="From EUR80 - EUR120"
+          price="From EUR80"
           items={fullValet}
           icon={Sparkles}
           popular
           trustLabel="Best value"
+          note="Final price confirmed via booking or WhatsApp based on vehicle size and condition."
         />
         <motion.article
           variants={fadeInUp}

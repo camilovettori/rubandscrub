@@ -3,7 +3,6 @@
 import { FormEvent, useState } from "react";
 import { buildBookingWhatsAppUrl } from "@/lib/booking/whatsapp";
 
-const services = ["Mini Valet", "Full Valet"];
 const extras = [
   "Seat shampoo",
   "Pet hair removal",
@@ -81,16 +80,10 @@ export function BookingForm({ whatsappNumber }: { whatsappNumber: string }) {
           </label>
           <label className="block text-sm font-medium text-gray-700">
             Service
-            <select className={fieldClassName()} name="service" defaultValue="" required>
-              <option value="" disabled>
-                Select a service
-              </option>
-              {services.map((service) => (
-                <option key={service} value={service}>
-                  {service}
-                </option>
-              ))}
-            </select>
+            <div className="mt-2 rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-cyan-50 px-4 py-3 text-sm font-semibold text-blue-700">
+              Full Valet
+            </div>
+            <input type="hidden" name="service" value="Full Valet" />
           </label>
           <label className="block text-sm font-medium text-gray-700">
             Car Model

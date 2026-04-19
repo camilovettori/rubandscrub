@@ -25,13 +25,11 @@ const initialFormData: FormData = {
   houseStreet: "",
   address: "",
   eircode: "",
-  service: "",
+  service: "Full Valet",
   carModel: "",
   selectedExtras: [],
   notes: "",
 };
-
-const services = ["Mini Valet", "Full Valet"];
 
 const extras = [
   { name: "Seat shampoo", price: "EUR20 - EUR40" },
@@ -169,22 +167,16 @@ function Step3Service({
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">Your Service</h2>
       <div className="space-y-4">
-        <label className="block">
-          <span className="text-sm font-medium text-gray-700">Service</span>
-          <select
-            className={fieldClassName()}
-            value={formData.service}
-            onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-            required
-          >
-            <option value="">Select a service</option>
-            {services.map((service) => (
-              <option key={service} value={service}>
-                {service}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+            Full Valet Service
+          </p>
+          <p className="max-w-2xl text-sm leading-6 text-gray-600">
+            Our premium mobile valeting service, tailored to your vehicle.
+            <br />
+            Final price confirmed based on size and condition.
+          </p>
+        </div>
         <label className="block">
           <span className="text-sm font-medium text-gray-700">Car Model</span>
           <input
@@ -319,7 +311,7 @@ export function BookingWizard({ whatsappNumber }: { whatsappNumber: string }) {
       case 2:
         return Boolean(formData.houseStreet && formData.address);
       case 3:
-        return Boolean(formData.service && formData.carModel);
+        return Boolean(formData.carModel && formData.service === "Full Valet");
       default:
         return true;
     }

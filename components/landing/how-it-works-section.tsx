@@ -8,8 +8,8 @@ import { fadeInUp, staggerContainer, sectionViewport } from "./motion-presets";
 const steps = [
   {
     icon: Sparkles,
-    title: "Choose your service",
-    description: "Select Mini Valet, Full Valet, or add extras.",
+    title: "Full Valet included",
+    description: "Full Valet is included, then you can add any extras you need.",
   },
   {
     icon: MessageSquare,

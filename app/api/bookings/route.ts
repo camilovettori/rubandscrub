@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/resend";
 import { getSiteSettings } from "@/lib/site-settings";
 
+const allowedService = "Full Valet";
+
 type BookingRequestBody = {
   fullName?: string;
   phone?: string;
@@ -187,7 +189,15 @@ function parseBookingDetails(body: BookingRequestBody): BookingRequestDetails | 
   const notes = body.notes?.trim() ?? "";
   const extras = normalizeList(body.extras ?? body.selectedExtras);
 
-  if (!fullName || !phone || !email || !houseStreet || !address || !service || !carModel) {
+  if (
+    !fullName ||
+    !phone ||
+    !email ||
+    !houseStreet ||
+    !address ||
+    service !== allowedService ||
+    !carModel
+  ) {
     return null;
   }
 
