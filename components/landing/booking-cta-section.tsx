@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { SectionShell } from "./section-shell";
 import { fadeInUp, sectionViewport } from "./motion-presets";
 import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 export function BookingCTASection({ whatsappNumber }: { whatsappNumber: string }) {
   const whatsappHref = getWhatsAppBaseUrl(whatsappNumber);
@@ -37,6 +38,7 @@ export function BookingCTASection({ whatsappNumber }: { whatsappNumber: string }
           href={whatsappHref}
           target="_blank"
           rel="noreferrer"
+          onClick={() => trackWhatsAppClick("booking_whatsapp")}
         >
           WhatsApp Us
         </a>

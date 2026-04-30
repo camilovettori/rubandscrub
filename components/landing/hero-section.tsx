@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Car, Clock, MapPin, Star } from "lucide-react";
 import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 import { fadeInUp, staggerContainer } from "./motion-presets";
 
 const highlights = ["We Come To You", "Dublin Coverage", "Premium Finish"];
@@ -116,6 +117,7 @@ export function HeroSection({ whatsappNumber }: { whatsappNumber: string }) {
                   href={whatsappHref}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackWhatsAppClick("hero_whatsapp")}
                 >
                   WhatsApp Us
                 </a>

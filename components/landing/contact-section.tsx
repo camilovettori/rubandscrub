@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { SectionShell } from "./section-shell";
 import { formatWhatsAppDisplay, getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 export function ContactSection({ whatsappNumber }: { whatsappNumber: string }) {
   const whatsappHref = getWhatsAppBaseUrl(whatsappNumber);
@@ -33,6 +34,7 @@ export function ContactSection({ whatsappNumber }: { whatsappNumber: string }) {
             href={whatsappHref}
             target="_blank"
             rel="noreferrer"
+            onClick={() => trackWhatsAppClick("footer_whatsapp")}
           >
             WhatsApp Us
           </a>

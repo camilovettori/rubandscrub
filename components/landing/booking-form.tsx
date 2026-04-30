@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { buildBookingWhatsAppUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const extras = [
   "Seat shampoo",
@@ -34,6 +35,7 @@ export function BookingForm({ whatsappNumber }: { whatsappNumber: string }) {
       notes: String(formData.get("notes") ?? ""),
     }, whatsappNumber);
 
+    trackWhatsAppClick("booking_whatsapp");
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   }
 

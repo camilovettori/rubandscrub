@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 export function PromotionalSection({ whatsappNumber }: { whatsappNumber: string }) {
   const whatsappHref = getWhatsAppBaseUrl(whatsappNumber);
@@ -50,6 +53,7 @@ export function PromotionalSection({ whatsappNumber }: { whatsappNumber: string 
                   href={whatsappHref}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackWhatsAppClick("promotional_whatsapp")}
                 >
                   WhatsApp Us
                 </a>

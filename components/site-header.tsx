@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/config/site";
 import { getWhatsAppBaseUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,6 +60,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
             href={whatsappHref}
             target="_blank"
             rel="noreferrer"
+            onClick={() => trackWhatsAppClick("header_whatsapp")}
           >
             WhatsApp
           </a>
@@ -121,7 +123,10 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
                 href={whatsappHref}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => {
+                  trackWhatsAppClick("header_whatsapp");
+                  setIsMenuOpen(false);
+                }}
               >
                 WhatsApp
               </a>

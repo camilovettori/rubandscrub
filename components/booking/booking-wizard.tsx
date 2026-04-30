@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { buildBookingWhatsAppUrl } from "@/lib/booking/whatsapp";
+import { trackWhatsAppClick } from "@/lib/analytics";
 import { BookingSuccess } from "./booking-success";
 
 type FormData = {
@@ -355,6 +356,7 @@ export function BookingWizard({ whatsappNumber }: { whatsappNumber: string }) {
       const url = buildBookingWhatsAppUrl(bookingSummary, whatsappNumber);
       setWhatsappUrl(url);
 
+      trackWhatsAppClick("booking_whatsapp");
       const newWindow = window.open(url, "_blank", "noopener,noreferrer");
       if (!newWindow) {
         window.location.href = url;

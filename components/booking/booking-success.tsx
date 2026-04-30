@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { CheckCircle2, MessageCircle } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 export function BookingSuccess({ whatsappUrl }: { whatsappUrl: string }) {
   return (
@@ -28,6 +29,7 @@ export function BookingSuccess({ whatsappUrl }: { whatsappUrl: string }) {
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-2xl bg-green-600 px-8 py-3 font-semibold text-white transition hover:bg-green-700"
+            onClick={() => trackWhatsAppClick("booking_whatsapp")}
           >
             <MessageCircle className="h-4 w-4" />
             Open WhatsApp
