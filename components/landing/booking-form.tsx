@@ -82,10 +82,12 @@ export function BookingForm({ whatsappNumber }: { whatsappNumber: string }) {
           </label>
           <label className="block text-sm font-medium text-gray-700">
             Service
-            <div className="mt-2 rounded-2xl border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-cyan-50 px-4 py-3 text-sm font-semibold text-blue-700">
-              Full Valet
-            </div>
-            <input type="hidden" name="service" value="Full Valet" />
+            <select className={fieldClassName()} name="service" required>
+              <option value="">Select a service</option>
+              <option value="Mini Valet">Mini Valet — €50</option>
+              <option value="Gold Valet">Gold Valet — €80</option>
+              <option value="Full Valet">Full Valet — €100</option>
+            </select>
           </label>
           <label className="block text-sm font-medium text-gray-700">
             Car Model

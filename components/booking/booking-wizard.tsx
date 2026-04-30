@@ -26,17 +26,17 @@ const initialFormData: FormData = {
   houseStreet: "",
   address: "",
   eircode: "",
-  service: "Full Valet",
+  service: "",
   carModel: "",
   selectedExtras: [],
   notes: "",
 };
 
 const extras = [
-  { name: "Seat shampoo", price: "EUR20 - EUR40" },
-  { name: "Pet hair removal", price: "EUR15 - EUR25" },
-  { name: "Engine bay clean", price: "EUR25 - EUR50" },
-  { name: "Hand wax/polish", price: "EUR30 - EUR60" },
+  { name: "Seat shampoo", price: "€20 - €40" },
+  { name: "Pet hair removal", price: "€15 - €25" },
+  { name: "Engine bay clean", price: "€25 - €50" },
+  { name: "Hand wax/polish", price: "€30 - €60" },
 ];
 
 function fieldClassName() {
@@ -168,16 +168,20 @@ function Step3Service({
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-900">Your Service</h2>
       <div className="space-y-4">
-        <div className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-            Full Valet Service
-          </p>
-          <p className="max-w-2xl text-sm leading-6 text-gray-600">
-            Our premium mobile valeting service, tailored to your vehicle.
-            <br />
-            Final price confirmed based on size and condition.
-          </p>
-        </div>
+        <label className="block">
+          <span className="text-sm font-medium text-gray-700">Service</span>
+          <select
+            className={fieldClassName()}
+            value={formData.service}
+            onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+            required
+          >
+            <option value="">Select a service</option>
+            <option value="Mini Valet">Mini Valet — €50</option>
+            <option value="Gold Valet">Gold Valet — €80</option>
+            <option value="Full Valet">Full Valet — €100</option>
+          </select>
+        </label>
         <label className="block">
           <span className="text-sm font-medium text-gray-700">Car Model</span>
           <input
@@ -312,7 +316,7 @@ export function BookingWizard({ whatsappNumber }: { whatsappNumber: string }) {
       case 2:
         return Boolean(formData.houseStreet && formData.address);
       case 3:
-        return Boolean(formData.carModel && formData.service === "Full Valet");
+        return Boolean(formData.carModel && formData.service);
       default:
         return true;
     }

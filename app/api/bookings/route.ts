@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/email/resend";
 import { getSiteSettings } from "@/lib/site-settings";
 
-const allowedService = "Full Valet";
+const allowedServices = ["Mini Valet", "Gold Valet", "Full Valet"];
 
 type BookingRequestBody = {
   fullName?: string;
@@ -89,7 +89,7 @@ function buildCustomerEmailHtml(details: BookingRequestDetails) {
                   <img
                     src="https://www.rubandscrub.ie/images/logos.png"
                     width="170"
-                    alt="Rub & Scrub"
+                    alt="Rub & Scrub Mobile Valeting Dublin logo"
                     style="display:block;margin:0 auto 4px;max-width:170px;width:170px;height:auto;border:0;outline:none;text-decoration:none;"
                   />
                 </td>
@@ -183,7 +183,7 @@ function parseBookingDetails(body: BookingRequestBody): BookingRequestDetails | 
   const email = body.email?.trim();
   const houseStreet = body.houseStreet?.trim();
   const address = body.address?.trim();
-  const service = body.service?.trim();
+  const service = body.service?.trim() ?? "";
   const carModel = body.carModel?.trim();
   const eircode = body.eircode?.trim() ?? "";
   const notes = body.notes?.trim() ?? "";
@@ -195,7 +195,7 @@ function parseBookingDetails(body: BookingRequestBody): BookingRequestDetails | 
     !email ||
     !houseStreet ||
     !address ||
-    service !== allowedService ||
+    !allowedServices.includes(service) ||
     !carModel
   ) {
     return null;

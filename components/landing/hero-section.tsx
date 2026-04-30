@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Car, Clock, MapPin, Star } from "lucide-react";
@@ -53,14 +54,17 @@ export function HeroSection({ whatsappNumber }: { whatsappNumber: string }) {
         <div className="relative overflow-hidden rounded-[32px] border border-slate-200/80 bg-slate-950 shadow-[0_32px_100px_-40px_rgba(15,23,42,0.8)]">
           <div className="absolute inset-0">
             {slides.map((slide, index) => (
-              <div
+              <Image
                 key={slide}
-                className={`absolute inset-0 bg-cover bg-center transition-[opacity,transform] duration-[900ms] ease-in-out ${
+                src={slide}
+                alt="Professional mobile car valeting in Dublin"
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className={`absolute inset-0 object-cover transition-[opacity,transform] duration-[900ms] ease-in-out ${
                   index === currentSlide ? "opacity-100" : "opacity-0"
                 }`}
                 style={{
-                  backgroundImage: `url(${slide})`,
-                  backgroundPosition: "center",
                   transform: index === currentSlide ? "scale(1.08)" : "scale(1)",
                 }}
               />
@@ -88,6 +92,9 @@ export function HeroSection({ whatsappNumber }: { whatsappNumber: string }) {
                 <h1 className="max-w-xl text-4xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_14px_rgba(15,23,42,0.5)] sm:text-5xl lg:text-6xl lg:leading-[1.03]">
                   Mobile Car Valeting in Dublin
                 </h1>
+                <p className="max-w-xl text-sm font-semibold uppercase tracking-[0.2em] text-sky-300/90">
+                  Serving homes and workplaces across Dublin, Ireland
+                </p>
                 <p className="max-w-xl text-lg leading-8 text-slate-100/95 drop-shadow-[0_1px_8px_rgba(15,23,42,0.35)]">
                   Professional, reliable car cleaning at your home or workplace, with bookings arranged
                   directly on WhatsApp.

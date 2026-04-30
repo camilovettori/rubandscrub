@@ -69,7 +69,7 @@ function ModalVideoTile({
           className="h-full w-full object-cover"
           src={item.videoSrc}
           poster={item.thumbnailSrc}
-          preload="none"
+          preload="metadata"
           controls={isActive}
           playsInline
           onPlay={() => {
@@ -130,7 +130,7 @@ function ShowcaseTile({
       <div className="relative min-h-[240px] overflow-hidden sm:min-h-[300px]">
         <Image
           src={item.thumbnailSrc}
-          alt={item.title}
+          alt="Mobile car valeting in action — Dublin"
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-[1.03]"

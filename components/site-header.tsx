@@ -18,7 +18,7 @@ export function SiteHeader({ whatsappNumber }: { whatsappNumber: string }) {
         <Link href="/" className="flex items-center gap-3 sm:gap-4">
           <Image
             src="/images/logos.png"
-            alt="Rub & Scrub"
+            alt="Rub & Scrub Mobile Valeting Dublin logo"
             width={900}
             height={900}
             className="h-[72px] md:h-[88px] w-auto object-contain"

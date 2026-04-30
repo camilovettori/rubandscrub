@@ -1,8 +1,32 @@
+import type { Metadata } from "next";
+import Script from "next/script";
 import { SiteFooter } from "@/components/landing/site-footer";
+import { breadcrumbSchema } from "@/lib/jsonLd";
+
+export const metadata: Metadata = {
+  title: "Terms & Conditions",
+  description: "Terms of service for Rub & Scrub Mobile Valeting Dublin.",
+  alternates: { canonical: "/terms-and-conditions" },
+};
 
 export default function TermsAndConditionsPage() {
   return (
     <>
+      <Script
+        id="ld-bc"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbSchema([
+              { name: "Home", url: "https://www.rubandscrub.ie" },
+              {
+                name: "Terms & Conditions",
+                url: "https://www.rubandscrub.ie/terms-and-conditions",
+              },
+            ])
+          ),
+        }}
+      />
       <main className="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="prose prose-gray mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Terms &amp; Conditions</h1>

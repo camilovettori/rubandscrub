@@ -37,7 +37,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
               <Image
                 src="/images/logos.png"
-                alt="Rub & Scrub"
+                alt="Rub & Scrub Mobile Valeting Dublin logo"
                 width={120}
                 height={40}
                 className="h-10 w-auto object-contain"

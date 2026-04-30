@@ -1,27 +1,59 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Sparkles, Wrench, type LucideIcon } from "lucide-react";
+import { Zap, Star, Sparkles, type LucideIcon } from "lucide-react";
 import { SectionShell } from "./section-shell";
 import { fadeInUp, staggerContainer, sectionViewport } from "./motion-presets";
 
-const fullValet = [
-  "Full exterior wash & dry",
-  "Wheels deep cleaned",
-  "Wax protection",
-  "Full interior vacuum",
-  "Seats & carpets shampooed",
-  "Dashboard & trims deep cleaned",
-  "Door shuts cleaned",
-  "Windows polished",
-];
+const BubblesBackground = dynamic(
+  () => import("./bubbles-background").then((m) => m.BubblesBackground),
+  { ssr: false, loading: () => null }
+);
 
-const extras = [
-  "Seat shampoo: EUR20 - EUR40",
-  "Pet hair removal: EUR15 - EUR25",
-  "Engine bay clean: EUR25 - EUR50",
-  "Hand wax/polish: EUR30 - EUR60",
+const services = [
+  {
+    title: "Mini Valet",
+    price: "€50",
+    icon: Zap,
+    items: [
+      "Hoover dashboard wipe",
+      "Plastics cleaned",
+      "Exterior wheel clean",
+      "Prep",
+      "Deep clean exterior",
+      "Wash",
+    ],
+  },
+  {
+    title: "Gold Valet",
+    price: "€80",
+    icon: Star,
+    popular: true as const,
+    trustLabel: "Most booked",
+    items: [
+      "Exterior wash & dry",
+      "Wheels cleaned",
+      "Interior hoover & full wipe down",
+      "Windows cleaned",
+      "Tyres dressed",
+    ],
+  },
+  {
+    title: "Full Valet",
+    price: "€100",
+    icon: Sparkles,
+    items: [
+      "Exterior pre-wash, wash & dry",
+      "Wheels cleaned",
+      "Interior hoover & full deep clean",
+      "Seats & carpets shampooed",
+      "Dashboard & trims dressed",
+      "Windows cleaned",
+      "Tyres dressed",
+    ],
+  },
 ];
 
 function ServiceCard({
@@ -31,7 +63,6 @@ function ServiceCard({
   icon: Icon,
   popular = false,
   trustLabel,
-  note,
 }: {
   title: string;
   price: string;
@@ -39,7 +70,6 @@ function ServiceCard({
   icon: LucideIcon;
   popular?: boolean;
   trustLabel?: string;
-  note?: string;
 }) {
   return (
     <motion.article
@@ -74,11 +104,6 @@ function ServiceCard({
           </li>
         ))}
       </ul>
-      {note && (
-        <div className="mb-6 rounded-2xl border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-slate-600">
-          {note}
-        </div>
-      )}
       <div className="mt-auto">
         <Link
           href="/booking"
@@ -93,57 +118,31 @@ function ServiceCard({
 
 export function ServicesSection() {
   return (
-    <SectionShell
-      id="services"
-      eyebrow="Services"
-      title="Clear pricing, premium finish"
-      description="Choose the valet level that fits your vehicle and current condition."
-    >
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={sectionViewport}
-        className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]"
+    <div className="relative overflow-hidden">
+      <BubblesBackground />
+      <SectionShell
+        id="services"
+        eyebrow="Services"
+        title="Clear pricing, premium finish"
+        description="Choose the valet level that fits your vehicle and current condition."
       >
-        <ServiceCard
-          title="Full Valet"
-          price="From EUR80"
-          items={fullValet}
-          icon={Sparkles}
-          popular
-          trustLabel="Best value"
-          note="Final price confirmed via booking or WhatsApp based on vehicle size and condition."
-        />
-        <motion.article
-          variants={fadeInUp}
-          whileHover={{ y: -4 }}
-          transition={{ duration: 0.45 }}
-          className="flex h-full flex-col rounded-[28px] border border-gray-200 bg-white p-8 shadow-lg transition duration-200 hover:shadow-2xl"
-        >
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-100 to-sky-50">
-              <Wrench className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Optional Extras</p>
-              <p className="text-2xl font-bold text-gray-900">Add-ons</p>
-            </div>
-          </div>
-          <ul className="mb-6 space-y-3 text-sm leading-6 text-gray-600">
-            {extras.map((item) => (
-              <li key={item} className="flex gap-3">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
-                <span>{item}</span>
-              </li>
+        <>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={sectionViewport}
+            className="grid gap-8 lg:grid-cols-3"
+          >
+            {services.map((service) => (
+              <ServiceCard key={service.title} {...service} />
             ))}
-          </ul>
-          <div className="mt-auto rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm leading-6 text-gray-600">
-            Final price may vary depending on vehicle size and condition.
-          </div>
-        </motion.article>
-      </motion.div>
-    </SectionShell>
+          </motion.div>
+          <p className="mt-6 text-center text-sm text-gray-500">
+            Prices shown are standard rates. Final price may vary depending on vehicle size and condition.
+          </p>
+        </>
+      </SectionShell>
+    </div>
   );
 }
-
